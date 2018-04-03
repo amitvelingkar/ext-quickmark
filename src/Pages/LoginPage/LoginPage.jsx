@@ -1,4 +1,6 @@
 import React from 'react';
+import { userActions } from '../../_actions';
+import { connect } from 'react-redux';
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -8,6 +10,25 @@ class LoginPage extends React.Component {
             password: '',
             submitted: false
         };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(e) {
+        const { name, value } = e.target;
+        this.setState({ [name]: value });
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+
+        this.setState({ submitted: true });
+        const { username, password } = this.state;
+        const { dispatch } = this.props;
+        if (username && password) {
+            dispatch(userActions.login(username, password));
+        }
     }
 
     render() {
@@ -41,4 +62,12 @@ class LoginPage extends React.Component {
     }
 }
 
-export {LoginPage};
+function mapStateToProps(state) {
+    const { loggingIn } = state.authentication;
+    return {
+        loggingIn
+    };
+}
+
+const connectedLoginPage = connect(mapStateToProps)(LoginPage);
+export { connectedLoginPage as LoginPage }; 
